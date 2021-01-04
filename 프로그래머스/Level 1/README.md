@@ -302,3 +302,149 @@ int solution(int n) {
 ```
 
 문제를 바로 찾았다!!! solution 안에 들어오는 n 변수의 값은 배열 index가 아니라 5일 경우 5까지 검사를 해야하는 숫자이기 때문에 초기화하는 과정에서 n+1까지 크기를 만들어야 한다. 따라서 밑에 for문에서도 2부터 비교를 하고, 두 번째 for문에서도 0이 아닌 1부터 비교를 하는 것이다. 이것도 충분하지만, 필요하지 않은 index가 0인 경우를 빼려면 밑에 for문의 index를 -1씩 다 해주면 될 것 같긴 한데, 그렇게 되면 숫자가 헷갈릴 수도 있기 때문에 고치지 않았다.
+<br>
+
+## # 두 개 뽑아서 더하기
+**\[문제 설명\]**
+
+정수 배열 numbers가 주어집니다. numbers에서 서로 다른 인덱스에 있는 두 개의 수를 뽑아 더해서 만들 수 있는 모든 수를 배열에 오름차순으로 담아 return 하도록 solution 함수를 완성해주세요.
+
+**\[제한사항\]**
+
+-   numbers의 길이는 2 이상 100 이하입니다.
+    -   numbers의 모든 수는 0 이상 100 이하입니다.
+
+**\[입출력 예\]**
+
+<table style="border-collapse: collapse; width: 100%;" border="1" data-ke-style="style1"><tbody><tr><td>numbers</td><td>result</td></tr><tr><td>[2,1,3,4,1]</td><td>[2,3,4,5,6,7]</td></tr><tr><td>[5,0,2,7]</td><td>[2,5,7,9,12]</td></tr></tbody></table>
+
+**\[입출력 예 설명\]**
+
+입출력 예 #1
+
+-   2 = 1 + 1 입니다. (1이 numbers에 두 개 있습니다.)
+-   3 = 2 + 1 입니다.
+-   4 = 1 + 3 입니다.
+-   5 = 1 + 4 = 2 + 3 입니다.
+-   6 = 2 + 4 입니다.
+-   7 = 3 + 4 입니다.
+-   따라서\[2,3,4,5,6,7\]을 return 해야 합니다.
+
+입출력 예 #2
+
+-   2 = 0 + 2 입니다.
+-   5 = 5 + 0 입니다.
+-   7 = 0 + 7 = 5 + 2 입니다.
+-   9 = 2 + 7 입니다.
+-   12 = 5 + 7 입니다.
+-   따라서\[2,5,7,9,12\]를 return 해야 합니다.
+
+**\[제출\]**
+
+```
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+vector<int> solution(vector<int> numbers) {
+    vector<int> answer;
+    vector<int> arr;
+    
+    for(int i=0; i<numbers.size(); i++){
+        for(int j=0; j<numbers.size(); j++){
+            if(i!=j){
+                arr.push_back(numbers[i]+numbers[j]);
+            }
+        }
+    }
+    sort(arr.begin(), arr.end());
+    for(int i=0; i<arr.size()-1; i++){
+        cout<<arr[i]<<endl;
+        if(arr[i]==arr[i+1]){
+            arr[i]=-1;
+        }
+    }
+    for(int j=0; j<arr.size(); j++){
+        if(arr[j]!=-1){
+            answer.push_back(arr[j]);
+        }
+    }
+    return answer;
+}
+```
+
+algorithm 헤더를 사용하면 sort함수를 사용할 수 있지만, 만약 헤더 사용에 제한이 있는 시험이라면 사용할 수 없기 때문에, insertion sort나 bubble sort 등 기본적인 sort들을 공부해야겠다.
+<br>
+
+## # 2016년
+**\[문제 설명\]**
+
+2016년 1월 1일은 금요일입니다. 2016년 a월 b일은 무슨 요일일까요? 두 수 a ,b를 입력받아 2016년 a월 b일이 무슨 요일인지 리턴하는 함수, solution을 완성하세요. 요일의 이름은 일요일부터 토요일까지 각각SUN,MON,TUE,WED,THU,FRI,SAT
+
+입니다. 예를 들어 a=5, b=24라면 5월 24일은 화요일이므로 문자열TUE를 반환하세요.
+
+**\[제한 조건\]**
+
+-   2016년은 윤년입니다.
+-   2016년 a월 b일은 실제로 있는 날입니다. (13월 26일이나 2월 45일같은 날짜는 주어지지 않습니다)
+
+**\[입출력 예\]**
+
+<table style="border-collapse: collapse; width: 100%;" border="1" data-ke-style="style1"><tbody><tr><td>a</td><td>b</td><td>result</td></tr><tr><td>5</td><td>24</td><td>TUE</td></tr></tbody></table>
+
+**\[제출\]**
+
+```
+#include <string>
+#include <vector>
+using namespace std;
+
+string DATE[7]={"FRI","SAT","SUN","MON","TUE","WED","THU"};
+int Day_Of_Month[12]={31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+string solution(int a, int b) {
+    string answer = "TUE";
+    
+    int cnt=0;
+    
+    for(int i=0; i<a; i++){
+        cnt+=Day_Of_Month[i-1];
+    }
+    cnt+=b;
+    cnt%=7;
+    
+    switch (cnt){
+        case 0:       
+            answer=DATE[6];
+            break;
+        case 1:
+            answer=DATE[0];
+            break;
+        case 2:
+            answer=DATE[1];
+            break;
+        case 3:
+            answer=DATE[2];
+            break;
+        case 4:
+            answer=DATE[3];
+            break;
+        case 5:
+            answer=DATE[4];
+            break;
+        case 6:
+            answer=DATE[5];
+            break;
+        default:
+            break;
+    }
+    
+    
+    
+    return answer;
+}
+```
+
+각 월의 일수를 Day\_of\_Month 안에 넣는다. for문을 통해 cnt에 a월 까지의 일수를 더한다. 또 a월의 b일이기 때문에, b일도 마저 더해준다. 이를 7로 나누면 나머지가 0부터 6의 숫자가 나오는데, 이는 2016년 1월 1일이 금요일이기 때문에, 이를 이용해 요일을 계산할 수 있는 것이다. 따라서 cnt를 7로 나눈 나머지가 0일 경우 목요일, 1일 경우 금요일... 식으로 계산된다. 이를 answer에 대입하면 된다.
+<br>
+
