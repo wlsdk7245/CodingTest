@@ -1,0 +1,111 @@
+## # 소수 찾기
+**\[문제 설명\]**
+
+1부터 입력받은 숫자 n 사이에 있는 소수의 개수를 반환하는 함수, solution을 만들어 보세요.
+
+소수는 1과 자기 자신으로만 나누어지는 수를 의미합니다.  
+(1은 소수가 아닙니다.)
+
+**\[제한 조건\]**
+
+-   n은 2이상 1000000이하의 자연수입니다.
+
+**\[입출력 예\]**
+
+<table style="border-collapse: collapse; width: 100%;" border="1" data-ke-style="style1"><tbody><tr><td>n</td><td>result</td></tr><tr><td>10</td><td>4</td></tr><tr><td>5</td><td>3</td></tr></tbody></table>
+
+**\[입출력 예 설명\]**
+
+입출력 예 #1  
+1부터 10 사이의 소수는 \[2,3,5,7\] 4개가 존재하므로 4를 반환
+
+입출력 예 #2  
+1부터 5 사이의 소수는 \[2,3,5\] 3개가 존재하므로 3를 반환
+
+숫자를 계속 나눠서 나뉘는 숫자가 없을 때 마다 answer++; 를 하는 알고리즘을 짰는데, 시간 초과로 효율성 테스트에서 실패했다. 구글링 결과 에라토스테네스의 체 알고리즘으로 짜야하는 문제라는 것을 알게 되었다.
+
+**\[첫 번째 제출\]**
+
+```
+#include <string>
+#include <vector>
+#include <iostream>
+using namespace std;
+
+int solution(int n) {
+    int answer = 0;
+    int arr[]={0};
+    for(int i=2; i*i<n; i++){
+        if(arr[i] == 0){
+            for(int j = 2; j<=n;j++){
+                if(j*i <= n){
+                    arr[j*i] = 1;
+                }
+            }
+        }
+    }
+    for(int i = 0;i<=n;i++){
+        cout<<arr[i]<<endl;
+        if(arr[i]==0) answer++;
+    }
+    
+    
+    return answer;
+}
+```
+
+이렇게 하면 될 줄 알았는데... 에라토스테네스의 체 알고리즘이라고 나름 짠 건데 실행이 되지 않는다.....
+
+출력을 해보니까 arr\[j\*i\]=1; 부분에서 그 부분 뿐 아니라 모든 배열 요소가 1로 초기화가 되는 것 같다. 이유가 뭔지는 모르겠지만 일단 수정을 해봤다.
+
+**\[두 번째 제출\]**
+
+```
+#include <string>
+#include <vector>
+using namespace std;
+
+int solution(int n) {
+    int answer = 0;
+    int *arr = new int[n]();
+    
+    for(int i=2; i<=n; i++){
+        if(arr[i]==0){
+            answer++;
+            for(int j=1; i*j<=n; j++){
+                arr[i*j]=1;
+            }
+        }
+        
+    }
+    return answer;
+}
+```
+
+이번에는 중간에 signal : aborted (core dumpled) 오류가 떴다. 효율성 테스트도 통과하고 테스트도 3개를 제외하고 다 통과했는데 무슨 문제가 있는 거지...
+
+**\[세 번째 제출\]**
+
+```
+#include <string>
+#include <vector>
+using namespace std;
+
+int solution(int n) {
+    int answer = 0;
+    int *arr = new int[n+1]();
+    
+    for(int i=2; i<=n; i++){
+        if(arr[i]==0){
+            answer++;
+            for(int j=1; i*j<=n; j++){
+                arr[i*j]=1;
+            }
+        }
+        
+    }
+    return answer;
+}
+```
+
+문제를 바로 찾았다!!! solution 안에 들어오는 n 변수의 값은 배열 index가 아니라 5일 경우 5까지 검사를 해야하는 숫자이기 때문에 초기화하는 과정에서 n+1까지 크기를 만들어야 한다. 따라서 밑에 for문에서도 2부터 비교를 하고, 두 번째 for문에서도 0이 아닌 1부터 비교를 하는 것이다. 이것도 충분하지만, 필요하지 않은 index가 0인 경우를 빼려면 밑에 for문의 index를 -1씩 다 해주면 될 것 같긴 한데, 그렇게 되면 숫자가 헷갈릴 수도 있기 때문에 고치지 않았다.
